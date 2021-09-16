@@ -1,3 +1,4 @@
+#dsgsd
 class DFA:
    
     def __init__(self, S, Q, q0, F, d, c):# Self must be provided as a First parameter to the Instance method and constructor. If you don’t provide it, it will cause an error.
