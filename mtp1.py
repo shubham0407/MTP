@@ -781,9 +781,8 @@ def check_disjuntion_of_guard_multiple_clock(guard1,guard2):
         return True
     
     elif len(guard1)==0 or len(guard2)==0:
-        return False
-    elif guard1==None or guard2==None:
-        return False    
+        return True
+      
     G1=re.split(',', guard1)
     G2=re.split(',', guard2)
     ans=False
