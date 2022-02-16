@@ -228,15 +228,15 @@ def deleteChar():
     printAlphabet()
   
 def addState():
-    char = simpledialog.askstring("Add New State", "Should be start with q")
+    char = simpledialog.askstring("Add New State", "Should be start with l")
     if char==None:
         return 
     if  len(char)<2:
         messagebox.showinfo("Error ", "If you wants to add State, Please Enter again")
         return
     
-    if char[0]!='q':
-        messagebox.showinfo("Error ", "Please Enter valid state initialise with q")
+    if char[0]!='l':
+        messagebox.showinfo("Error ", "Please Enter valid state initialise with l")
         return
     b=True
     if  len(char)>=2 and   char.isalnum() :
@@ -328,7 +328,7 @@ def addFinalState():
         messagebox.showinfo("Error ", "1. If you wants to add final State, Please Enter valid state")
         return 
     b=True 
-    if char[0]=='q' :
+    if char[0]=='l' :
         for i in range(len(final_state_list)):
             if char==final_state_list[i] :
                 messagebox.showinfo("Error ", "state Already added, Please enter new state")
@@ -437,7 +437,7 @@ def addTransition():
     if From_state==None:
         messagebox.showinfo("Error", "Transitions is not valid due to invalid From State, please Enter again")
         return
-    if From_state!= None and len(From_state)>1 and  From_state[0]=='q' and  From_state.isalnum() :
+    if From_state!= None and len(From_state)>1 and  From_state[0]=='l' and  From_state.isalnum() :
         for i in range(len(state_list)):
             if From_state==state_list[i] :
                 transitions_dict_temp[count]=From_state
@@ -504,7 +504,7 @@ def addTransition():
     if To_state==None:
         messagebox.showinfo("Error", "Transitions is not valid due to invalid To State, please Enter again")
         return
-    if To_state!= None and  len(To_state)>1 and To_state[0]=='q'  and To_state.isalnum() :
+    if To_state!= None and  len(To_state)>1 and To_state[0]=='l'  and To_state.isalnum() :
         for i in range(len(state_list)):
             if To_state==state_list[i] :
                 transitions_dict_temp[count]=To_state
@@ -601,6 +601,9 @@ class tp():
 # print(y)
 # print(len(y))
 
+def remove_space(string):
+	return string.replace(" ", "")
+
 def checkCompleteness():
     max_int=sys.maxsize
     count_state_list=[False]*len(state_list)    
@@ -683,9 +686,12 @@ def checkCompleteness():
                     elif guard[1]=='!' and guard[2]=='=':
                         interval_list.append(tp(0,float(guard[3:]-0.1)))
                         interval_list.append(tp(float(guard[3:])+0.1,float('inf')))
-                    elif guard[1]=='=':
+                    elif guard[1]=='=' and guard[2]=='=':
                         interval_list.append(tp(float(guard[3:]),float(guard[3:])))
  
+                    else:
+                        messagebox.showinfo("Completeness", "Wrong input format of gurds")
+                        return
 
 
                 print("\nthis is intervsls")
@@ -811,6 +817,85 @@ def checkDeteminism():
 
 
 
+
+
+def generate_txt_file():
+    file1=open("E:\MTPTA\Ta1.txt","w")
+    file1.writelines("system:ad94_fig10")
+    file1.write("\n\n")
+    
+    C="clock:1:"
+    for i in range(len(clock_list)):
+        #C+=str(i+1)
+        #C+=":"
+        C+=str(clock_list[i].lower())
+        file1.write(C)
+        file1.write("\n")
+        C="clock:1:"
+    file1.write("\n")
+
+
+    A="event:"
+    for i in range(len(alphabet_list)):
+        A+=str(alphabet_list[i])
+        file1.write(A)
+        file1.write("\n")
+        A="event:"
+    file1.write("\n")
+
+
+    file1.write("process:P")
+    file1.write("\n")
+    S="location:P:"
+    for i in range(len(state_list)):
+        S+=str(state_list[i])
+        S+="{"
+    
+        if state_list[i] in initial_state_list:
+            S+="initial:"
+
+        if state_list[i] in final_state_list:
+            S+="labels: green"
+        
+        S+="}"
+
+        file1.write(S)
+        file1.write("\n")
+        S="location:P:"
+    file1.write("\n")
+
+    T="edge:P:"
+    for i in range(len(transition_dict)):
+        trans=transition_dict[i]
+        T+=str(trans[0])
+        T+=":"
+        T+=str(trans[3])
+        T+=":"
+        T+=str(trans[1])
+        T+="{"
+
+        if trans[2]!=None and len(trans[2])!=0 :
+            T+="provided: "
+            T+=str(trans[2])
+
+            if trans[4]!=None and len(trans[4])!=0:
+                T+=" : "
+                T+="do:"
+                T+=str(trans[4])
+        
+        elif trans[4]!=None and len(trans[4])!=0 :
+            T+="do:"
+            T+=str(trans[4])
+        
+        T+="}"
+        file1.write(T)
+        file1.write("\n")
+        T="edge:P:"
+
+    file1.close()
+
+
+
 #----------------------Define label-------------------------------
 l1=Label(window, text="Alphabets: Σ : ")
 l1.grid(row=0,column=0)
@@ -913,6 +998,8 @@ Button(text="Draw Timed Automata",command=getvals,fg="green",bg="yellow").grid(r
 Button(text="CheckCompleteness",command=checkCompleteness,fg="black",bg="yellow").grid(row=15,column=5)
 
 Button(text="CheckDeterminism",command=checkDeteminism,fg="black",bg="yellow").grid(row=15,column=7)
+
+Button(text="Generate .txt file",command=generate_txt_file,fg="green",bg="yellow").grid(row=15,column=9)
 
 #----------------------Define Entries------------------------------------
 
